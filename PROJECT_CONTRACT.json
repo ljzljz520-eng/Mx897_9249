@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "metrics": {"production_loc": 2302, "production_files": 46, "production_packages": 16, "test_files": 9, "production_functions": 313, "decision_points": 311},
+  "persistence": {"module": "go.etcd.io/bbolt", "entities": ["Reader", "TransferTask", "FieldMapping", "TaskLog", "Confirmation"], "reopen_test": "TestPersistenceSurvivesReopen"},
+  "workflows": [
+    {"steps": ["enter legacy and target endpoints", "run deterministic connection checks", "inspect readiness details", "proceed only when both are reachable"], "test": "TestWorkflowConnectionTransferConfirmation"},
+    {"steps": ["import legacy reader rows", "check duplicate card numbers", "validate debt format and fields", "persist a validated transfer task"], "test": "TestWorkflowConnectionTransferConfirmation"},
+    {"steps": ["show task summary and logs", "counterpart administrator approves or rejects", "record confirmation and task outcome", "enable borrowing only for approved debt-free readers"], "test": "TestBusinessChain24"},
+    {"steps": ["load persisted readers", "filter by department or status", "sort by card number", "render a migration report"], "test": "TestWorkflowQueryAndReport"}
+  ]
+}
