@@ -76,3 +76,25 @@ func (s *Service) TransferReader(card string, task model.TransferTask) error {
 	r.Enabled = true
 	return s.Store.UpdateReaderAndTask(r, task)
 }
+
+func (s *Service) ConfirmAndEnable(id, card, admin string) error {
+	t, e := s.Store.GetTask(id)
+	if e != nil {
+		return e
+	}
+	if t.Status != model.TaskAwaiting {
+		return fmt.Errorf("task not awaiting confirmation")
+	}
+	r, e := s.Store.GetReader(card)
+	if e != nil {
+		return e
+	}
+	t.Status = model.TaskCompleted
+	t.Accepted = t.Total
+	r.Enabled = true
+	if e := s.Store.UpdateTaskAndReader(t, r); e != nil {
+		return e
+	}
+	_, e = s.Confirm(id, admin, model.DecisionApprove)
+	return e
+}
